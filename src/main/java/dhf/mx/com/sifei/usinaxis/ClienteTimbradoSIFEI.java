@@ -5,6 +5,7 @@ package dhf.mx.com.sifei.usinaxis;
 import java.io.ByteArrayInputStream;
 import java.rmi.RemoteException;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.ini4j.Wini;
 
 /**
  * Ejemplo de timbrado PHP del WS SOAP getCFDI() de SIFEI. *
@@ -47,12 +49,15 @@ public class ClienteTimbradoSIFEI {
         SIFEIServiceStub serviceStub = null;
        
         try {
+            //para efectos de demostracion los acceso se leen desde un archivo de config.
+            Wini ini = new Wini(new File("./config.ini"));
 
-            String usuarioSIFEI = "usuarioSIFEI";
-            String passwordSIFEI = "password SIFEI";
-            String serie = "";//vacia para usuarios de timbrado
-            String pathXML = "Path de XML";
-            String idEquipo = "Id de equipo proporcionado por correo electrónico";
+            String usuarioSIFEI = ini.get("timbrado", "UsuarioSIFEI", String.class);
+            String passwordSIFEI = ini.get("timbrado", "PasswordSIFEI", String.class);
+            String idEquipo=ini.get("timbrado", "IdEquipoGenerado", String.class);//Id de equipo proporcionado por correo electrónico             
+            String serie = "";
+            
+            
             
             //Esta es la url del ambiente de pruebas
             String urlTimbrado = "http://devcfdi.sifei.com.mx:8080/SIFEI33/SIFEI?wsdl";
@@ -64,7 +69,7 @@ public class ClienteTimbradoSIFEI {
             var getCFDI=document.addNewGetCFDI();
             //Llenado de parametros obligatorios que tienen que enviarse
             
-            byte[] bFile = Files.readAllBytes(Path.of("./assets/xml_sellado.xml"));
+            byte[] bFile = Files.readAllBytes(Path.of("./assets/xml_sellado.xml")); //cambia la ruta por una que exista en tu sistema de archivos.
             getCFDI.setArchivoXMLZip(bFile);
             getCFDI.setIdEquipo(idEquipo);
             getCFDI.setPassword(passwordSIFEI);
@@ -76,7 +81,7 @@ public class ClienteTimbradoSIFEI {
             var getCFDIResponse = getCFDIResponseE.getGetCFDIResponse();
             
 
-            //La respuesta es un zip, se obtienen los bytes del zip que contiene el XML.
+            //La respuesta es un zip, se obtienen los bytes del zip que contiene el XML para luego extraer el xml del zip.
             String XMLTimbrado = getFileFromZipBytes(getCFDIResponse.getReturn());
             System.out.println("\n"+XMLTimbrado);
 

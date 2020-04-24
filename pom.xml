@@ -24,8 +24,12 @@
 	<version>1.0.0</version>
 	 
 </dependency>
-
-
+<!--dependencias para leer archivos ini-->
+   <dependency>
+            <groupId>org.ini4j</groupId>
+            <artifactId>ini4j</artifactId>
+            <version>0.5.4</version>
+        </dependency>
 <!--dependencias para consumir ws-->
 <dependency>
     <groupId>javax.activation</groupId>

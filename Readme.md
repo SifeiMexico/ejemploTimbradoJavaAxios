@@ -3,9 +3,12 @@
 
 
 
-# Ejemplos de timbrado y cancelación en JAVA
+# Ejemplos de timbrado y cancelación en JAVA (Axis2)
 
-Este repositorio incluye en ejemplos de los servicios SOAP de timbrado y cancelación de Sifei en en lenguaje JAVA.
+Este repositorio incluye en ejemplos de los servicios SOAP de timbrado y cancelación de Sifei en en lenguaje JAVA con Axis2.
+
+Si deseas ver un ejemplo con Jax-ws accede al siguiente repositorio:
+https://github.com/SifeiMexico/EjemploTimbradoYCancelacionJavaJaxWs
 
 # Pasos
 

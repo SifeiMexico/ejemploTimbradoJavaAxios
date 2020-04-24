@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>dhf.mx.com.sifei</groupId>
+    <artifactId>usinaxis</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    <repositories>
+       <repository>
+        <id>local-maven-repo</id>
+        <url>file:///${project.basedir}/local-maven-repo</url>
+    </repository>
+        
+    </repositories>
+    <dependencies>
+       <dependency>
+	<groupId>mx.com.sifei</groupId>
+	<artifactId>timbrado</artifactId>
+	<version>1.0.0</version>
+	 
+</dependency>
+
+
+<!--dependencias para consumir ws-->
+<dependency>
+    <groupId>javax.activation</groupId>
+    <artifactId>activation</artifactId>
+    <version>1.1.1</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.ws.commons.axiom</groupId>
+    <artifactId>axiom-api</artifactId>
+    <version>1.2.20</version>
+</dependency>
+<dependency>
+<groupId>org.apache.ws.commons.axiom</groupId>
+<artifactId>axiom-impl</artifactId>
+<version>1.2.20</version>
+</dependency>
+<dependency>
+<groupId>org.apache.axis2</groupId>
+<artifactId>axis2-adb</artifactId>
+<version>1.7.7</version>
+</dependency>
+<dependency>
+<groupId>org.apache.axis2</groupId>
+<artifactId>axis2-transport-local</artifactId>
+<version>1.7.7</version>
+</dependency>
+<dependency>
+<groupId>org.apache.axis2</groupId>
+<artifactId>axis2-xmlbeans</artifactId>
+<version>1.7.7</version>
+</dependency>
+<dependency>
+<groupId>org.apache.axis2</groupId>
+<artifactId>axis2-kernel</artifactId>
+<version>1.7.7</version>
+</dependency>
+<dependency>
+<groupId>org.apache.axis2</groupId>
+<artifactId>axis2-transport-http</artifactId>
+<version>1.7.7</version>
+</dependency>
+<dependency>
+<groupId>commons-httpclient</groupId>
+<artifactId>commons-httpclient</artifactId>
+<version>3.1</version>
+</dependency>
+<dependency>
+<groupId>org.apache.neethi</groupId>
+<artifactId>neethi</artifactId>
+<version>3.0.3</version>
+</dependency>
+<dependency>
+<groupId>org.apache.woden</groupId>
+<artifactId>woden-core</artifactId>
+<version>1.0M10</version>
+</dependency>
+<dependency>
+<groupId>org.apache.ws.xmlschema</groupId>
+<artifactId>xmlschema-core</artifactId>
+<version>2.2.1</version>
+</dependency>
+    </dependencies>
+</project>

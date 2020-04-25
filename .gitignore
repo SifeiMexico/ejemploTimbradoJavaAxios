@@ -15,3 +15,5 @@ assets/
 lib/
 local-maven-repo/
 *.ini
+*.pfx
+*.jar

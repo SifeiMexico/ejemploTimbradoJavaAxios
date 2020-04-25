@@ -2,6 +2,9 @@
 package dhf.mx.com.sifei.usinaxis;
 
 
+import cancelacion.sifei.service.CancelaCFDIDocument;
+import cancelacion.sifei.service.CancelaCFDIResponse;
+import cancelacion.sifei.service.CancelaCFDIResponseDocument;
 import java.io.ByteArrayInputStream;
 import java.rmi.RemoteException;
 import java.io.ByteArrayOutputStream;
@@ -12,6 +15,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.activation.DataHandler;
@@ -22,7 +30,9 @@ import javax.xml.stream.XMLStreamException;
 import mapeados.GetCFDI;
 import mapeados.GetCFDIDocument;
 import mapeados.impl.GetCFDIImpl;
+import mx.com.sifei.cancelacion.CancelacionStub;
 import mx.com.sifei.timbrado.SIFEIServiceStub;
+import mx.com.sifei.timbrado.SifeiExceptionException;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.AxisFault;
@@ -31,9 +41,9 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.ini4j.Wini;
 
 /**
- * Ejemplo de timbrado PHP del WS SOAP getCFDI() de SIFEI. *
+ * Ejemplo de timbrado PHP del WS SOAP getCFDI() de SIFEI utiliznado axis2
  * 
- * @author Daniel El CFDI(XML) debe estar sellado correctamente Nota: Para
+ * El CFDI(XML) debe estar sellado correctamente Nota: Para
  *         simplificar los ejemplos todas las rutas son relativas y los datos se
  *         leen de un archivo config.ini, lo cual no debe de hacerse en un
  *         ambiente de produccion.
@@ -43,8 +53,68 @@ import org.ini4j.Wini;
  * 
  */
 public class ClienteTimbradoSIFEI {
+    
+    public static void main (String[] args) throws IOException, XMLStreamException{
+       cancelar(); 
+    }
+    
+ public static void cancelar() throws AxisFault, IOException, XMLStreamException{
+            //leyendo datos , cambiar origen de datos
+            Wini ini = new Wini(new File("./config.ini"));
+            String UsuarioSIFEI = ini.get("timbrado", "UsuarioSIFEI", String.class);
+            String PasswordSIFEI = ini.get("timbrado", "PasswordSIFEI", String.class);
+            String IdEquipo=ini.get("timbrado", "IdEquipoGenerado", String.class);            
+            String pfxPath=ini.get("timbrado", "PFX", String.class);
+            String pfxPass=ini.get("timbrado", "PFXPass", String.class);
+            
+            //se lee el PFX
+            byte[] pfxBytes=Files.readAllBytes(Paths.get(pfxPath));            
+            
+            
+            List<String> uuids = new ArrayList();      
+            uuids.add("8b2d26b2-f96b-410e-aaeb-664d2af28794");//uuid a cancelar
+            
+            CancelacionStub cancelacionStub=new CancelacionStub();  
+            CancelaCFDIDocument cancela= CancelaCFDIDocument.Factory.newInstance();
+            var cancelaParams=cancela.addNewCancelaCFDI();
+            
+            //llenado de parametros
+            cancelaParams.setUsuarioSIFEI(UsuarioSIFEI);    
+            cancelaParams.setPasswordSifei(PasswordSIFEI);
+            cancelaParams.setPfx(pfxBytes);
+            cancelaParams.setPasswordPfx(pfxPass);
+            cancelaParams.setRfcEmisor("XAXX010101000");
+            cancelaParams.setUuidsArray(uuids.stream().toArray(String[]::new));
+            try{
+               CancelaCFDIResponseDocument responseDocument= cancelacionStub.cancelaCFDI(cancela);
+               CancelaCFDIResponse response=responseDocument.getCancelaCFDIResponse();
+               
+               //obtenemos el acuse de cancelacion
+                String xmlAcuseCancelacion= response.getReturn();
+                 
+                response.setReturn(xmlAcuseCancelacion); 
+                //se imprime acuse, se puede guardar en bd,etc.
+                 System.out.println(xmlAcuseCancelacion);
+                
+            }catch(Exception e){
+                 System.out.println("\n:::::EXCEPCION:::::");
+                e.printStackTrace();
+                 
+                
+            }
+            finally{
+                
+                System.out.println("\n:::::SOAP REQUEST:::::");
+                cancelacionStub._getServiceClient().getLastOperationContext().getMessageContext("Out").getEnvelope().serialize(System.out);
 
-    public static void main(String[] args) throws AxisFault, XMLStreamException {
+                 
+            }
+     
+    
+ }
+ 
+    
+    public static void timbrar() throws AxisFault, XMLStreamException, IOException {
 
         SIFEIServiceStub serviceStub = null;
        
@@ -85,7 +155,7 @@ public class ClienteTimbradoSIFEI {
             String XMLTimbrado = getFileFromZipBytes(getCFDIResponse.getReturn());
             System.out.println("\n"+XMLTimbrado);
 
-        } catch (Exception ex) {
+        } catch ( SifeiExceptionException ex) {
             //Captura del Resquest
             System.out.println("\n:::::EXCEPCION:::::");
             ex.printStackTrace();
